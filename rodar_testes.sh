@@ -11,9 +11,9 @@ WAIT_INTERVAL=10
 MICROSERVICES_DIR="./spring-petclinic-microservices"
 
 declare -A CENARIOS
-CENARIOS["A"]="50 10 10m"
-CENARIOS["B"]="100 20 10m"
-CENARIOS["C"]="200 40 5m"
+CENARIOS["A"]="50 5 10m"
+CENARIOS["B"]="100 10 10m"
+CENARIOS["C"]="200 20 5m"
 
 # Função para esperar o endpoint estar pronto
 wait_for_endpoint() {
