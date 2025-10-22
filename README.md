@@ -22,7 +22,7 @@ pip install locust
 ```bash
 locust -f locustfile.py --host=http://localhost:8080
 ```
-Abra no navegador: http://localhost:8089
+Abra no navegador: http://localhost:8080
 
 ### Cenários de Teste
 
@@ -74,6 +74,9 @@ docker-compose up -d
 curl http://localhost:8080/api/customer/owners
 ```
 
+docker exec -it customers-service mysql -uroot -proot petclinic_customers -e "SELECT * FROM owners LIMIT 5;"
+docker exec -it vets-service mysql -uroot -proot petclinic_vets -e "SELECT * FROM vets LIMIT 5;"
+
 ### 3️⃣ Execute um Teste Simples (10 min)
 ```bash
 # Volte para o diretório do projeto
@@ -93,15 +96,17 @@ locust -f locustfile.py \
   --headless
 ```
 
-### 4️⃣ Execute as 30 Repetições (COMPLETO)
+### 4️⃣ Execute as repetições (quantidade definida no arquivo) (COMPLETO)
 ```bash
-# Para cada cenário, execute:
-./run_multiple_tests.sh
-
-# Selecione o cenário (A, B ou C)
-# Confirme 30 repetições
-# Aguarde... (pode levar várias horas!)
+# Dar permissão de execução:
+chmod +x rodar_testes.sh
 ```
+
+```bash
+./rodar_testes.sh
+```
+
+
 
 ### 5️⃣ Consolide os Resultados
 ```bash
