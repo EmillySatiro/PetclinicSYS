@@ -1,16 +1,7 @@
-"""
-Locust - Script de teste de carga para Spring PetClinic Microservices
-Mix de requisições:
-- GET /owners (lista donos) — 40%
-- GET /owners/{id} — 30%
-- GET /vets — 20%
-- POST /owners (cadastro simples) — 10%
-"""
 
 from locust import HttpUser, task, between
 import random
 import json
-
 
 class PetClinicUser(HttpUser):
     """
@@ -20,7 +11,7 @@ class PetClinicUser(HttpUser):
     # Tempo de espera entre requisições (1 a 3 segundos)
     wait_time = between(1, 3)
     
-    # URL base do API Gateway (ajuste conforme necessário)
+    # URL base do API Gateway 
     # host = "http://localhost:8080"  # será definido na linha de comando
     
     # Lista para armazenar IDs de owners criados
@@ -166,7 +157,6 @@ class PetClinicUser(HttpUser):
                 response.failure(f"Status code: {response.status_code}")
 
 
-# Configuração para execução via linha de comando
 if __name__ == "__main__":
     import os
     os.system("locust -f locustfile.py --host=http://localhost:8080")
