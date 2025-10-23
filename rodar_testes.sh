@@ -1,4 +1,3 @@
-#!/bin/bash
 HOST="http://localhost:8080"
 REPS=5
 # Tempo máximo para esperar o serviço subir (em segundos)
@@ -43,20 +42,29 @@ for cenario in "${!CENARIOS[@]}"; do
     echo "🚀 Executando CENÁRIO ${cenario} (${users} usuários por ${time})"
     
     for i in $(seq 1 $REPS); do
-        echo "➡️  Execução ${i}/${REPS}"
+        # Diretório para salvar resultados
+        CSV_PREFIX="resultados/${cenario}_${i}"
+        STATS_FILE="${CSV_PREFIX}_stats.csv"
+
+        # Checa se a execução já foi feita
+        if [ -f "$STATS_FILE" ]; then
+            echo "⚡ Execução ${i}/${REPS} do cenário ${cenario} já existe ($STATS_FILE). Pulando..."
+            continue
+        fi
+
+        echo "➡️  Execução ${i}/${REPS} do cenário ${cenario}"
+
         # 🔁 Reinicia os microserviços com HSQLDB
         echo "♻️ Reiniciando docker compose"
         docker compose -f "$MICROSERVICES_DIR/docker-compose.yml" down
         docker compose -f "$MICROSERVICES_DIR/docker-compose.yml" up -d
         
-        # ⏳ ESPERA ROBUSTA (A GRANDE MUDANÇA ESTÁ AQUI)
-        # Espera pelo API Gateway E pelo Customers Service
+        # ⏳ Espera pelos endpoints
         if ! wait_for_endpoint "$HOST/api/customer/owners" "customers-service"; then
             echo "Erro ao esperar pelo customers-service. Pulando execução ${i}."
             continue # Pula para a próxima repetição
         fi
         
-        # Espera pelo Vets Service
         if ! wait_for_endpoint "$HOST/api/vet/vets" "vets-service"; then
             echo "Erro ao esperar pelo vets-service. Pulando execução ${i}."
             continue # Pula para a próxima repetição
@@ -65,8 +73,6 @@ for cenario in "${!CENARIOS[@]}"; do
         echo "✅ Todos os serviços estão prontos. Iniciando Locust em 5s..."
         sleep 5 # Um tempinho extra para garantir o registro no Eureka
         
-        # Diretório para salvar resultados
-        CSV_PREFIX="resultados/${cenario}_${i}"
         mkdir -p resultados
         
         # 🚀 Executa o Locust em modo headless
@@ -75,7 +81,7 @@ for cenario in "${!CENARIOS[@]}"; do
             --host=$HOST --csv=$CSV_PREFIX \
             > "${CSV_PREFIX}.log" 2>&1
             
-        echo "✅ Execução ${i} finalizada — CSV salvo em ${CSV_PREFIX}_stats.csv"
+        echo "✅ Execução ${i} finalizada — CSV salvo em ${STATS_FILE}"
     done
 done
 
