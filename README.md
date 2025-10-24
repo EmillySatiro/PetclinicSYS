@@ -1,134 +1,124 @@
+# 🧪 Testes de Carga - Spring PetClinic Microservices
 
-# Testes de Carga - Spring PetClinic Microservices
+Este projeto realiza **testes de carga automatizados** utilizando o **Locust** para avaliar o desempenho do sistema **Spring PetClinic Microservices**, simulando diferentes níveis de carga em cenários controlados.
 
-Script de teste de carga usando Locust para avaliar o desempenho do Spring PetClinic.
+---
 
-## Mix de Requisições
+## ⚙️ Requisitos
 
-- **40%** - GET /owners (lista donos)
-- **30%** - GET /owners/{id} (busca por ID)
-- **20%** - GET /vets (lista veterinários)
-- **10%** - POST /owners (cria novo dono)
+Antes de executar os testes, certifique-se de ter instalado:
 
-## Instalação
+- **Docker** e **Docker Compose**  
+- **Python 3.10+**  
+- **Virtualenv**
+
+---
+
+## 🐍 Criação do Ambiente Python
 
 ```bash
-pip install locust
+# Crie e ative o ambiente virtual
+python -m venv venv
+source venv/bin/activate   # (Linux/Mac)
+venv\Scripts\activate      # (Windows)
+
+# Instale as dependências
+pip install -r requirements.txt
 ```
 
-## Como Executar
+---
 
-### Modo Interface Web
-```bash
-locust -f locustfile.py --host=http://localhost:8080
-```
-Abra no navegador: http://localhost:8080
+## 🐳 Subir o Sistema Alvo (Spring PetClinic)
 
-### Cenários de Teste
-
-**Cenário A (50 usuários, 10 min):**
-```bash
-locust -f locustfile.py --host=http://localhost:8080 --users=50 --spawn-rate=10 --run-time=10m --headless --html=scenario_A.html --csv=scenario_A
-```
-
-**Cenário B (100 usuários, 10 min):**
-```bash
-locust -f locustfile.py --host=http://localhost:8080 --users=100 --spawn-rate=10 --run-time=10m --headless --html=scenario_B.html --csv=scenario_B
-```
-
-**Cenário C (200 usuários, 5 min):**
-```bash
-locust -f locustfile.py --host=http://localhost:8080 --users=200 --spawn-rate=10 --run-time=5m --headless --html=scenario_C.html --csv=scenario_C
-```
-
-## Resultados
-
-Os testes geram:
-- `scenario_X.html` - Relatório visual
-- `scenario_X_stats.csv` - Estatísticas
-- `scenario_X_failures.csv` - Falhas registradas
-
-## Aplicação Alvo
-
-Spring PetClinic Microservices: https://github.com/spring-petclinic/spring-petclinic-microservices
+1. **Clone o repositório oficial:**
 
 ```bash
 git clone https://github.com/spring-petclinic/spring-petclinic-microservices.git
 cd spring-petclinic-microservices
-docker-compose up -d
 ```
 
+2. **Suba a aplicação:**
 
-### 2️⃣ Suba a Aplicação PetClinic
 ```bash
-# Clone o repositório oficial (se ainda não tiver)
-git clone https://github.com/spring-petclinic/spring-petclinic-microservices.git
+docker compose up --build -d
+```
 
-# Entre no diretório
-cd spring-petclinic-microservices
+3. **Verifique se os serviços estão ativos:**
 
-# Suba com Docker Compose
-docker-compose up -d
-
-# Aguarde ~2 minutos e verifique se está funcionando
+```bash
 curl http://localhost:8080/api/customer/owners
 ```
 
-docker exec -it customers-service mysql -uroot -proot petclinic_customers -e "SELECT * FROM owners LIMIT 5;"
-docker exec -it vets-service mysql -uroot -proot petclinic_vets -e "SELECT * FROM vets LIMIT 5;"
+---
 
-### 3️⃣ Execute um Teste Simples (10 min)
-```bash
-# Volte para o diretório do projeto
-cd /home/emilly/sysPetclinic/sysPetclinic
+## 🧰 Estrutura do Projeto de Testes
 
-# Execute o script interativo
-./run_tests.sh
+O repositório contém:
 
-# Ou execute um cenário específico direto
-locust -f locustfile.py \
-  --host=http://localhost:8080 \
-  --users 50 \
-  --spawn-rate 5 \
-  --run-time 10m \
-  --html reports/teste.html \
-  --csv reports/teste \
-  --headless
+```
+.
+├── locustfile.py           # Define as tarefas e mix de requisições
+├── rodar_testes.sh         # Script principal que executa todos os cenários
+├── requirements.txt
+└── resultados/             # Pasta onde são salvos os CSVs e logs
 ```
 
-### 4️⃣ Execute as repetições (quantidade definida no arquivo) (COMPLETO)
+---
+
+## 🚀 Execução dos Testes
+
+1. **Dê permissão de execução ao script:**
 ```bash
-# Dar permissão de execução:
 chmod +x rodar_testes.sh
 ```
 
+2. **Execute todos os testes automaticamente:**
 ```bash
 ./rodar_testes.sh
 ```
 
+O script define:
+- Todos os cenários de carga
+- Quantidade de execuções repetidas
+- Armazenamento automático dos resultados em CSV
 
+---
 
-### 5️⃣ Consolide os Resultados
+## 🧩 Execução Manual (Opcional)
+
+### Cenário A – 50 usuários, 10 min
 ```bash
-# Após as 30 repetições de cada cenário
-python consolidate_results.py --scenario all --compare
-
-# Isso gera:
-# - reports/consolidado_cenario_A.csv
-# - reports/consolidado_cenario_B.csv
-# - reports/consolidado_cenario_C.csv
-# - reports/comparacao_cenarios.csv
+locust -f locustfile.py --host=http://localhost:8080   --users=50 --spawn-rate=5 --run-time=10m   --headless --csv=resultados/A_1 --html=resultados/A_1.html
 ```
+
+### Cenário B – 100 usuários, 10 min
+```bash
+locust -f locustfile.py --host=http://localhost:8080   --users=100 --spawn-rate=10 --run-time=10m   --headless --csv=resultados/B_1 --html=resultados/B_1.html
+```
+
+### Cenário C – 200 usuários, 5 min
+```bash
+locust -f locustfile.py --host=http://localhost:8080   --users=200 --spawn-rate=20 --run-time=5m   --headless --csv=resultados/C_1 --html=resultados/C_1.html
+```
+
+---
 
 ## 📊 Estrutura dos Resultados
 
-```
-reports/
-├── cenario_A_run_1_report.html       # Relatório visual da execução 1
-├── cenario_A_run_1_stats.csv         # Estatísticas da execução 1
-├── cenario_A_run_1_stats_history.csv # Histórico temporal
-├── ...
-├── cenario_A_run_30_stats.csv        # Última execução
-├── consolidado_cenario_A.csv         # MÉDIAS E DESVIOS PADRÃO
-└── comparacao_cenarios.csv           # COMPARAÇÃO FINAL
-```
+Após as execuções, os resultados são armazenados em `resultados/`, incluindo:
+
+| Arquivo | Descrição |
+|----------|------------|
+| `A_1_exceptions.csv` | Exceções registradas na execução 1 do cenário A |
+| `A_1_failures.csv` | Falhas de requisições |
+| `A_1_stats.csv` | Estatísticas acumuladas da execução |
+| `A_1_stats_history.csv` | Histórico temporal completo |
+| `A_1_log.txt` | Log detalhado da execução |
+
+---
+
+## 🧠 Observações
+
+- As execuções **não utilizam a interface Web do Locust**, sendo totalmente automatizadas por linha de comando.  
+- Cada cenário é repetido múltiplas vezes para permitir análise estatística robusta.  
+- O sistema do Pet Clinic já realiza **pré-carregamento automático de dados** no banco, garantindo consistência nas requisições de leitura.
