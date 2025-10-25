@@ -4,6 +4,10 @@ Este projeto realiza **testes de carga automatizados** utilizando o **Locust** p
 
 ---
 
+## 🎥 Demonstração
+
+👉 [Assista no YouTube](https://youtu.be/MbJSzSjjFMI)
+
 ## ⚙️ Requisitos
 
 Antes de executar os testes, certifique-se de ter instalado:
