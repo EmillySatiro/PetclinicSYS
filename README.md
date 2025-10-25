@@ -7,6 +7,7 @@ Este projeto realiza **testes de carga automatizados** utilizando o **Locust** p
 ## 🎥 Demonstração
 
 👉 [Assista no YouTube](https://youtu.be/MbJSzSjjFMI)
+
 👉 [Leia o relatório](https://www.overleaf.com/read/zydvxzhqfcmd#2b7684)
 
 ## ⚙️ Requisitos
